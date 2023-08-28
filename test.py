@@ -19,6 +19,8 @@ def voice_to_text():
 
         with sr.Microphone() as source:
             recognizer = sr.Recognizer()
+            # recognizer.adjust_for_ambient_noise(source, duration=1)
+            print("Listening...")
             audio = recognizer.listen(source, 10)
         
         try:
@@ -48,7 +50,9 @@ def chatgpt_response(prompt, history):
 
 def text_to_speech(text):
     # Convert text to speech using the pyttsx3 library
-    engine = pyttsx3.init()
+    engine = pyttsx3.init('sapi5')
+    voices = engine.getProperty('voices')
+    engine.setProperty('voice', voices[1].id)
     engine.say(text)
     engine.runAndWait()
 
