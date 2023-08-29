@@ -17,18 +17,21 @@ with open("secrets.json") as secrets_file:
 
 API_ENDPOINT = secrets["API_ENDPOINT"]
 API_KEY = secrets["API_KEY"]
-PATH_TO_BOOK = "E:\Career\Ideal\\250 questions for starting a nonprofit-F W Media_Adams Media (2015).pdf"
-# PATH_TO_BOOK = "E:\Career\Ideal\\2023 K-12 final catalog-updated.pdf"
-# PATH_TO_BOOK = "E:\Career\Ideal\wfnj_handbook1219.pdf"
+PATH_TO_BOOK = []
+PATH_TO_BOOK.append("E:\\250 questions for starting a nonprofit-F W Media_Adams Media (2015).pdf")
+# PATH_TO_BOOK.append("E:\\250 Tactics to Promote, Motivate, and Raise More Money-Entrepreneur Press (2010).pdf")
+# PATH_TO_BOOK.append("E:\Start your own nonprofit organization.pdf")
 MODEL = "paraphrase-distilroberta-base-v1"
+CHAR_LEN = 1000
 
-def extract_text_from_pdf(pdf_path):
-    with open(pdf_path, 'rb') as file:
-        reader = PdfReader(file)
-        text = ""
-        for page in range(len(reader.pages)):
-            # if reader.pages(page) is not None:
-            text += reader.pages[page].extract_text()
+def extract_text_from_pdf(pdf_paths):
+    text = ""
+    for path in pdf_paths:
+        with open(path, 'rb') as file:
+            reader = PdfReader(file)
+            for page in range(len(reader.pages)):
+                # if reader.pages(page) is not None:
+                text += reader.pages[page].extract_text()
     return text
 
 def preprocess_text(text):
@@ -52,7 +55,7 @@ def retrieve_best_match_faiss(query):
     best_match_index = indices[0][0]
     return book_sentences[best_match_index]
 
-def is_response_in_book(response, model, threshold=0.3):
+def is_response_in_book(response, model, threshold=0.2):
     # Use your retrieval method to get the most similar passage to the response
     # similar_passage = retrieve_best_match_faiss(response)
     similar_passage = retrieve_best_match(response)
@@ -68,7 +71,7 @@ def is_response_in_book(response, model, threshold=0.3):
 
 def get_verified_response_from_chatgpt(prompt, conversation_history):
     # First, search the book's content using your retrieval method
-    relevant_passage = retrieve_best_match_faiss(prompt)[:10000]
+    relevant_passage = retrieve_best_match(prompt)[:10000]
     # relevant_passage = retrieve_best_match(prompt)[:10000]
     # print(len(relevant_passage))
 
@@ -96,8 +99,8 @@ def chatgpt_response(prompt, history, relevant_passage):
         "messages": history + [{"role": "user", "content": prompt}]\
             + [{"role": "system", "content": "Strictly use data only and only from the passage provided. \
             Outside information is forbidden without exception. The provided passage is as follows: " \
-            + relevant_passage}] + [{"role": "system", "content": "Response should be as concise and as \
-            lucid as possible. Restrict your response to 100 characters" }]
+            + relevant_passage}] + [{"role": "system", "content": f"Response should be as concise and as \
+            lucid as possible. Restrict your response to {CHAR_LEN} characters" }]
     }
     
     response = requests.post(API_ENDPOINT, headers=headers, json=data)
@@ -138,15 +141,15 @@ def main():
 
     conversation_history = []
 
-    text_to_speech("Welcome! How may I assist you today?")
+    # text_to_speech("Welcome! How may I assist you today?")
     print("Welcome! How may I assist you today?")
 
     while True:
         
-        text_to_speech("Feel free to ask me a question.")
-        # user_question = input("Feel free to ask me a question: ")
+        # text_to_speech("Feel free to ask me a question.")
+        user_question = input("Feel free to ask me a question: ")
 
-        user_question = voice_to_text()
+        # user_question = voice_to_text()
 
         print("User:", user_question)
 
@@ -156,13 +159,13 @@ def main():
 
         conversation_history.append({"role": "assistant", "content": response})
 
-        text_to_speech(response)
+        # text_to_speech(response)
         print("Assistant: " + response)
 
-        text_to_speech("Do you want to continue? Please say Yes or No")
-        # answer = input("Do you want to continue? Please type Yes or No: ")
+        # text_to_speech("Do you want to continue? Please say Yes or No")
+        answer = input("Do you want to continue? Please type Yes or No: ")
 
-        answer = voice_to_text()
+        # answer = voice_to_text()
         
         if answer.lower() == "no":
             text_to_speech("It was great assisting you! If you have more questions in the future, feel free to reach out. Have a wonderful day!")
