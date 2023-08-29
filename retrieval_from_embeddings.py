@@ -19,8 +19,8 @@ API_ENDPOINT = secrets["API_ENDPOINT"]
 API_KEY = secrets["API_KEY"]
 PATH_TO_BOOK = []
 PATH_TO_BOOK.append("E:\\250 questions for starting a nonprofit-F W Media_Adams Media (2015).pdf")
-# PATH_TO_BOOK.append("E:\\250 Tactics to Promote, Motivate, and Raise More Money-Entrepreneur Press (2010).pdf")
-# PATH_TO_BOOK.append("E:\Start your own nonprofit organization.pdf")
+PATH_TO_BOOK.append("E:\\250 Tactics to Promote, Motivate, and Raise More Money-Entrepreneur Press (2010).pdf")
+PATH_TO_BOOK.append("E:\Start your own nonprofit organization.pdf")
 MODEL = "paraphrase-distilroberta-base-v1"
 CHAR_LEN = 1000
 
@@ -104,8 +104,11 @@ def chatgpt_response(prompt, history, relevant_passage):
     }
     
     response = requests.post(API_ENDPOINT, headers=headers, json=data)
-    # print(response.json())
-    return response.json()["choices"][0]["message"]["content"]
+
+    try:
+        return response.json()["choices"][0]["message"]["content"]
+    except:
+        print(response.json())
 
 def voice_to_text():
     # Use speech recognition to convert voice input to text
