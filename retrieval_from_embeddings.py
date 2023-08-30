@@ -171,7 +171,7 @@ def main():
         # answer = voice_to_text()
         
         if answer.lower() == "no":
-            text_to_speech("It was great assisting you! If you have more questions in the future, feel free to reach out. Have a wonderful day!")
+            # text_to_speech("It was great assisting you! If you have more questions in the future, feel free to reach out. Have a wonderful day!")
             print("It was great assisting you! If you have more questions in the future, feel free to reach out. Have a wonderful day!")
             break
 
