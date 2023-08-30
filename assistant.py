@@ -15,6 +15,15 @@ class Assistant:
         self.book_sentences = self.processor.preprocess_text(self.book_content)
         self.chatbot = Chatbot(self.book_sentences)
 
+    def process_question(self, question):
+
+        conversation_history = []  # This can be modified based on how you handle conversation history
+        conversation_history.append({"role": "user", "content": question})
+        response = self.chatbot.get_verified_response_from_chatgpt(question, conversation_history)
+        conversation_history.append({"role": "assistant", "content": response})
+        
+        return response
+
     def main(self):
         conversation_history = []
         # text_to_speech("Welcome! How may I assist you today?")
