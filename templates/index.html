@@ -19,12 +19,27 @@
                 <input type="submit" value="Ask">
             </form>
         </section>
+        <section>
+            <form action="/upload" method="post" enctype="multipart/form-data">
+                <label for="pdf">Upload a PDF:</label>
+                <input type="file" id="pdf" name="pdf" accept=".pdf" required>
+                <input type="submit" value="Upload">
+            </form>
+        </section>
         <div class="response-box">
             <h2>Response:</h2>
-            <!-- Added div to store the response in a data attribute -->
             <div id="response-data" data-response="{{ response }}" style="display: none;"></div>
             <p id="response-text"></p>
         </div>
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <ul class="flashes">
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
     </main>
 
     <footer>
@@ -33,47 +48,39 @@
     </footer>
 
     <script>
-        // Retrieve the response from the data attribute
         let responseElement = document.getElementById("response-data");
         let responseText = responseElement.getAttribute("data-response");
         let displayElement = document.getElementById("response-text");
         let index = 0;
-        let isBackspacing = false;  // Flag to indicate if we're currently backspacing to correct a typo
+        let isBackspacing = false;
 
         function typeCharacter() {
             if (index < responseText.length) {
-                // Introduce a typo with a small probability (e.g., 3%)
                 if (!isBackspacing && Math.random() < 0.03) {
                     displayElement.textContent += getRandomChar();
                     isBackspacing = true;
-                    setTimeout(typeCharacter, getHumanDelay(true));  // Pause slightly longer for a typo
+                    setTimeout(typeCharacter, getHumanDelay(true));
                     return;
                 }
 
                 if (isBackspacing) {
-                    // Remove the typo
                     displayElement.textContent = displayElement.textContent.slice(0, -1);
                     isBackspacing = false;
-                    setTimeout(typeCharacter, getHumanDelay(true));  // Pause slightly longer after correcting a typo
+                    setTimeout(typeCharacter, getHumanDelay(true));
                     return;
                 }
 
-                // Type the actual character
                 displayElement.textContent += responseText[index];
                 index++;
-
                 setTimeout(typeCharacter, getHumanDelay());
             }
         }
 
         function getHumanDelay(isTypo = false) {
-            let baseDelay = 10 + Math.random() * 20;  // Base typing speed
-
-            // If it's a typo or punctuation, introduce a longer delay
+            let baseDelay = 10 + Math.random() * 20;
             if (isTypo || [',', '.', '!', '?'].includes(responseText[index - 1])) {
                 baseDelay += 40 + Math.random() * 40;
             }
-
             return baseDelay;
         }
 
@@ -82,10 +89,7 @@
             return chars[Math.floor(Math.random() * chars.length)];
         }
 
-        // Start the typing effect
         typeCharacter();
-
     </script>
-
 </body>
 </html>

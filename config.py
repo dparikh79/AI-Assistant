@@ -8,9 +8,9 @@ API_ENDPOINT = SECRETS["API_ENDPOINT"]
 API_KEY = SECRETS["API_KEY"]
 
 PATH_TO_BOOK = [
-    "E:\\250 questions for starting a nonprofit-F W Media_Adams Media (2015).pdf",
-    "E:\\250 Tactics to Promote, Motivate, and Raise More Money-Entrepreneur Press (2010).pdf",
-    "E:\\Start your own nonprofit organization.pdf"
+    "E:\Books\\250 questions for starting a nonprofit-F W Media_Adams Media (2015).pdf",
+    "E:\Books\\250 Tactics to Promote, Motivate, and Raise More Money-Entrepreneur Press (2010).pdf",
+    "E:\Books\\Start your own nonprofit organization.pdf"
 ]
 
 # PATH_TO_BOOK = [
