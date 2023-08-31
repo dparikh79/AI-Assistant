@@ -21,6 +21,8 @@
         </section>
         <div class="response-box">
             <h2>Response:</h2>
+            <!-- Added div to store the response in a data attribute -->
+            <div id="response-data" data-response="{{ response }}" style="display: none;"></div>
             <p id="response-text"></p>
         </div>
     </main>
@@ -31,8 +33,9 @@
     </footer>
 
     <script>
-
-        let responseText = "{{ response }}";
+        // Retrieve the response from the data attribute
+        let responseElement = document.getElementById("response-data");
+        let responseText = responseElement.getAttribute("data-response");
         let displayElement = document.getElementById("response-text");
         let index = 0;
         let isBackspacing = false;  // Flag to indicate if we're currently backspacing to correct a typo

@@ -44,7 +44,8 @@ class Chatbot:
         if self.is_response_in_book(response):
             return response
         else:
-            return "I couldn't find a direct answer, please contact Dhiren Parikh for more details."
+            response = "I couldn't find a direct answer, please contact Dhiren Parikh for more details."
+            return response
 
     def chatgpt_response(self, prompt, history, relevant_passage):
         headers = {
