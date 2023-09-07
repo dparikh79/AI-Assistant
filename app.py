@@ -32,18 +32,20 @@ def upload_file():
     if 'pdf' not in request.files:
         flash('No file part')
         return redirect(request.url)
-    file = request.files['pdf']
-    if file.filename == '':
+    files = request.files.getlist('pdf')
+    if not files or all([f.filename == '' for f in files]):
         flash('No selected file')
         return redirect(request.url)
-    if file and allowed_file(file.filename):
-        filename = secure_filename(file.filename)
-        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-        path = get_updated_path()
+    uploaded_files = []
+    for file in files:
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            uploaded_files.append(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+    if uploaded_files:
         global assistant
-        assistant = Assistant(path, MODEL)
-        # session['assistant_initialized'] = True  # Set flag to True after upload
-        flash('File successfully uploaded')
+        assistant = Assistant(uploaded_files, MODEL)
+        flash('Files successfully uploaded')
         return redirect(url_for('index'))
     else:
         flash('Allowed file types are .pdf')

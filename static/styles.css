@@ -91,6 +91,38 @@ input[type="file"]:focus {
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.2); /* Shadow on focus */
 }
 
+#file-inputs input[type="file"] {
+    margin-bottom: 10px;
+}
+
+.file-input-wrapper label {
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.file-input-wrapper {
+    display: flex;
+    flex-direction: column;  /* Keep direction as column */
+    align-items: flex-start; /* Align items to the start */
+    position: relative;      /* Set position to relative for absolute positioning of the cross sign */
+    margin-bottom: 10px;
+    width: fit-content;     /* Adjust width to fit content */
+}
+
+input[type="file"] {
+    width: auto;             /* Reset the width to auto */
+}
+
+.remove-input {
+    position: absolute;     /* Position the cross sign absolutely */
+    top: 50%;               /* Center it vertically */
+    right: -20px;           /* Position it to the right of the file input */
+    transform: translateY(-50%); /* Center it vertically using transform */
+    cursor: pointer;
+    color: red;
+    font-weight: bold;
+}
+
 /* Styles for the file input's label */
 label[for="pdf"] {
     display: block;
