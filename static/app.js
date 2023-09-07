@@ -45,6 +45,8 @@ class Chatbox {
 
         let msg1 = {name: "User", message: text1}
         this.messages.push(msg1)
+        this.updateChatText(chatbox)
+        textField.value = ''
 
         fetch($SCRIPT_ROOT + '/chat', {
             method: 'POST',

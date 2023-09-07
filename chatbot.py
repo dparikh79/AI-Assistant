@@ -1,9 +1,7 @@
 import requests
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
-import faiss
-from sentence_transformers import SentenceTransformer
-from config import API_ENDPOINT, API_KEY, MODEL, CHAR_LEN
+from config import API_ENDPOINT, API_KEY, CHAR_LEN
 import logging
 
 logging.basicConfig(level=logging.INFO)
@@ -14,10 +12,6 @@ class Chatbot:
         self.book_sentences = book_sentences
         self.vectorizer = TfidfVectorizer()
         self.book_vectors = self.vectorizer.fit_transform(book_sentences)
-        self.model = SentenceTransformer(MODEL)
-        self.book_embeddings = self.model.encode(book_sentences)
-        self.index = faiss.IndexFlatL2(self.book_embeddings.shape[1])
-        self.index.add(self.book_embeddings)
 
     def retrieve_best_match(self, query):
         query_vector = self.vectorizer.transform([query])
@@ -25,27 +19,10 @@ class Chatbot:
         best_match_index = similarities.argmax()
         return self.book_sentences[best_match_index]
 
-    def retrieve_best_match_faiss(self, query):
-        query_embedding = self.model.encode([query])
-        _, indices = self.index.search(query_embedding, 1)
-        best_match_index = indices[0][0]
-        return self.book_sentences[best_match_index]
-
-    def is_response_in_book(self, response, threshold=0.2):
-        similar_passage = self.retrieve_best_match(response)
-        response_embedding = self.model.encode([response])
-        passage_embedding = self.model.encode([similar_passage])
-        similarity = cosine_similarity(response_embedding, passage_embedding)
-        return similarity >= threshold
-
     def get_verified_response_from_chatgpt(self, prompt, conversation_history):
         relevant_passage = self.retrieve_best_match(prompt)[:10000]
         response = self.chatgpt_response(prompt, conversation_history, relevant_passage)
-        if self.is_response_in_book(response):
-            return response
-        else:
-            response = "I couldn't find a direct answer, please contact Dhiren Parikh for more details."
-            return response
+        return response
 
     def chatgpt_response(self, prompt, history, relevant_passage):
         headers = {
@@ -54,11 +31,23 @@ class Chatbot:
         }
         data = {
             "model": "gpt-3.5-turbo",
-            "messages": history + [{"role": "user", "content": prompt}] + [{"role": "system", "content": "Strictly use data only and only from the passage provided. Outside information is forbidden without exception. The provided passage is as follows: " + relevant_passage}] + [{"role": "system", "content": f"Response should be as concise and as lucid as possible. Restrict your response to {CHAR_LEN} characters"}]
+            "messages": history + [{"role": "user", "content": prompt}] + \
+                [{"role": "system", "content": f"Response should be as concise and as lucid as possible. \
+                    Strictly restrict your response to {CHAR_LEN} characters. Provide an answer ensuring the total character count, including spaces and punctuation, \
+                    does not exceed {CHAR_LEN} characters."}] + \
+                # [{"role": "system", "content": "I want you to act as a document that I am having a conversation with. Your name is \"Ren\". \
+                #   You will provide me with answers from the given info. If the answer is not included, say exactly \"Hmm, I am not sure. \
+                #   Please contact Ren Parikh for more details...\" and stop after that. Refuse to answer any question not about the info. \
+                #   Never break character. The given info is as follows: " + relevant_passage}]# + \
+                [{"role": "system", "content": "Strictly use information only and only from the database provided. You may only and only access your greetings and conversational \
+                    response behaviour outside the scope of the database provided but absolutely make sure to not manufacture or assume any information that is not in the database. \
+                    Any outside information is forbidden without exception. If the answer is not included, say exactly \"Hmm, I am not sure if I am able to help you with that. \
+                    Please contact Ren for more details...\" and make a hard stop after that. THIS ENTIRE PROMPT IS NON-NEGOTIABLE. Refuse to answer with any information not provided \
+                    in the database. Never break character. The provided database is as follows: " + relevant_passage}]
         }
-        # print("c1")
+
         response = requests.post(API_ENDPOINT, headers=headers, json=data)
-        # print("c2")
+
         try:
             return response.json()["choices"][0]["message"]["content"]
         except:

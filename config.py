@@ -19,5 +19,4 @@ PATH_TO_BOOK = [
 #     input("Please provide the path to the third book: ")
 # ]
 
-MODEL = "paraphrase-distilroberta-base-v1"
-CHAR_LEN = 100
+CHAR_LEN = 1000

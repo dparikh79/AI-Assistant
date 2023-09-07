@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, session, redirect, url_for, f
 import os
 from werkzeug.utils import secure_filename
 from assistant import Assistant
-from config import PATH_TO_BOOK, MODEL
+from config import PATH_TO_BOOK
 import shutil
 import atexit
 
@@ -16,7 +16,7 @@ ALLOWED_EXTENSIONS = {'pdf'}
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-assistant = Assistant(PATH_TO_BOOK, MODEL)
+assistant = Assistant(PATH_TO_BOOK)
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -66,7 +66,7 @@ def upload_file():
         file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
         path = get_updated_path()
         global assistant
-        assistant = Assistant(path, MODEL)
+        assistant = Assistant(path)
         # session['assistant_initialized'] = True  # Set flag to True after upload
         flash('File successfully uploaded')
         return redirect(url_for('index'))
@@ -81,7 +81,7 @@ def index():
     #     session['assistant_initialized'] = False
 
     # if  session['assistant_initialized'] == True:
-    #     assistant = Assistant(PATH_TO_BOOK, MODEL)
+    #     assistant = Assistant(PATH_TO_BOOK)
     #     session['assistant_initialized'] = False
 
     if request.method == 'POST':

@@ -1,4 +1,4 @@
-from config import PATH_TO_BOOK, MODEL
+from config import PATH_TO_BOOK
 from pdf_processor import PDFProcessor
 from chatbot import Chatbot
 from audio_processor import AudioProcessor
@@ -7,9 +7,8 @@ import logging
 logging.basicConfig(level=logging.INFO)
 
 class Assistant:
-    def __init__(self, paths, model_name):
+    def __init__(self, paths):
         self.paths = paths
-        self.model_name = model_name
         self.processor = PDFProcessor(self.paths)
         self.book_content = self.processor.extract_text_from_pdf()
         self.book_sentences = self.processor.preprocess_text(self.book_content)
@@ -53,5 +52,5 @@ class Assistant:
                 break
 
 if __name__ == "__main__":
-    assistant = Assistant(PATH_TO_BOOK, MODEL)
+    assistant = Assistant(PATH_TO_BOOK)
     assistant.main()
