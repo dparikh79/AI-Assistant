@@ -20,4 +20,4 @@ PATH_TO_BOOK = [
 # ]
 
 MODEL = "paraphrase-distilroberta-base-v1"
-CHAR_LEN = 1000
+CHAR_LEN = 100
