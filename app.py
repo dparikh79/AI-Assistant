@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, session, redirect, url_for, flash
+from flask import Flask, render_template, request, session, redirect, url_for, flash, jsonify
 import os
 from werkzeug.utils import secure_filename
 from assistant import Assistant
@@ -26,6 +26,31 @@ def get_updated_path():
     for filename in os.listdir(UPLOAD_FOLDER):
         path.append(os.path.join(UPLOAD_FOLDER, filename))
     return path
+
+def get_response(msg):
+    response = assistant.process_question(msg)
+    return response
+
+def clear_uploads_directory():
+    folder = app.config['UPLOAD_FOLDER']
+    for filename in os.listdir(folder):
+        file_path = os.path.join(folder, filename)
+        try:
+            if os.path.isfile(file_path) or os.path.islink(file_path):
+                os.unlink(file_path)
+            elif os.path.isdir(file_path):
+                shutil.rmtree(file_path)
+        except Exception as e:
+            print(f'Failed to delete {file_path}. Reason: {e}')
+
+atexit.register(clear_uploads_directory)
+
+@app.post("/chat")
+def chat():
+    text = request.get_json().get("message")
+    response_chat = get_response(text)
+    message = {"answer": response_chat}
+    return jsonify(message)
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
@@ -70,20 +95,6 @@ def index():
             session.clear()
         session['visited'] = True
     return render_template('index.html', response=session.get('response', ""))
-
-def clear_uploads_directory():
-    folder = app.config['UPLOAD_FOLDER']
-    for filename in os.listdir(folder):
-        file_path = os.path.join(folder, filename)
-        try:
-            if os.path.isfile(file_path) or os.path.islink(file_path):
-                os.unlink(file_path)
-            elif os.path.isdir(file_path):
-                shutil.rmtree(file_path)
-        except Exception as e:
-            print(f'Failed to delete {file_path}. Reason: {e}')
-
-atexit.register(clear_uploads_directory)
 
 if __name__ == '__main__':
     app.run()
