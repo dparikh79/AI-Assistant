@@ -93,7 +93,91 @@ class Chatbox {
 
     }
 
+    setupResize() {
+        let startX, startY, startWidth, startHeight;
+    
+        // Helper function to disable text selection
+        const disableTextSelection = () => {
+            document.body.style.userSelect = 'none';
+        };
+    
+        // Helper function to re-enable text selection
+        const enableTextSelection = () => {
+            document.body.style.userSelect = '';
+        };
+    
+        // Create the resizing handle
+        const resizeHandle = document.createElement('div');
+        resizeHandle.style.width = '10px';
+        resizeHandle.style.height = '10px';
+        resizeHandle.style.background = 'black';
+        resizeHandle.style.position = 'absolute';
+        resizeHandle.style.top = '0';
+        resizeHandle.style.left = '0';
+        resizeHandle.style.cursor = 'nw-resize';
+        this.args.chatBox.appendChild(resizeHandle);
+    
+        let animationFrameId;
+
+        const onMouseMove = (event) => {
+            if (!this.resizing) return;
+        
+            // Cancel the previous frame to avoid stacking
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+            }
+        
+            animationFrameId = requestAnimationFrame(() => {
+                const dx = startX - event.clientX;
+                const dy = startY - event.clientY;
+        
+                const newWidth = startWidth + dx;
+                const newHeight = startHeight + dy;
+        
+                // Define minimum and maximum dimensions
+                const minWidth = 300;
+                const minHeight = 300;
+                const maxWidth = 800;
+                const maxHeight = 800;
+        
+                // Batch style changes to reduce reflows
+                const styles = {};
+        
+                if (newWidth >= minWidth && newWidth <= maxWidth) {
+                    styles.width = `${newWidth}px`;
+                }
+                if (newHeight >= minHeight && newHeight <= maxHeight) {
+                    styles.height = `${newHeight}px`;
+                }
+        
+                // Apply the styles in one go
+                Object.assign(this.args.chatBox.style, styles);
+            });
+        };        
+    
+        const onMouseUp = () => {
+            this.resizing = false;
+            enableTextSelection();  // Re-enable text selection
+            document.removeEventListener('mousemove', onMouseMove);
+            document.removeEventListener('mouseup', onMouseUp);
+        };
+    
+        resizeHandle.addEventListener('mousedown', (event) => {
+            this.resizing = true;
+    
+            disableTextSelection();  // Disable text selection
+    
+            startX = event.clientX;
+            startY = event.clientY;
+            startWidth = this.args.chatBox.offsetWidth;
+            startHeight = this.args.chatBox.offsetHeight;
+    
+            document.addEventListener('mousemove', onMouseMove);
+            document.addEventListener('mouseup', onMouseUp);
+        });
+    }    
 }
 
 const chatbox = new Chatbox();
 chatbox.display();
+chatbox.setupResize();
