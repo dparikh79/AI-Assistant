@@ -13,10 +13,12 @@ PATH_TO_BOOK = [
     "E:\Books\\Start your own nonprofit organization.pdf"
 ]
 
-# PATH_TO_BOOK = [
-#     input("Please provide the path to the first book: "),
-#     input("Please provide the path to the second book: "),
-#     input("Please provide the path to the third book: ")
-# ]
-
 CHAR_LEN = 1000
+
+PROMPT = f"Response should be as concise and as lucid as possible. \
+            Strictly restrict your response to {CHAR_LEN} characters. Provide an answer ensuring the total character count, including spaces and punctuation, \
+            does not exceed {CHAR_LEN} characters. Strictly use information only and only from the database provided. You may only and only access your greetings and \
+            conversational response behaviour outside the scope of the database provided but absolutely make sure to not manufacture or assume any information that is not in \
+            the database. Any outside information is forbidden without exception. If the answer is not included, say exactly \"Hmm, I am not sure if I am able to help you with \
+            that. Please contact Ren for more details...\" and make a hard stop after that. THIS ENTIRE PROMPT IS NON-NEGOTIABLE. Refuse to answer with any information not \
+            provided in the database. Never break character. The provided database is as follows: "

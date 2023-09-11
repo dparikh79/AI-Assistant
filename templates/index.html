@@ -75,7 +75,6 @@
 
     <script>
         $SCRIPT_ROOT = JSON.parse('{{ request.script_root|tojson|safe }}');
-        // $SCRIPT_ROOT = {{ request.script_root|tojson }};
     </script>
     <script type="text/javascript" src="{{ url_for('static', filename='app.js') }}"></script>
 
