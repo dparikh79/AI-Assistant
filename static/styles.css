@@ -286,10 +286,10 @@ footer {
     color: white;
 }
 
-.chatbox__description--header {
+/* .chatbox__description--header {
     font-size: .9rem;
     color: white;
-}
+} */
 
 /* Messages */
 .chatbox__messages {

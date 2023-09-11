@@ -25,9 +25,9 @@ class Chatbox {
             }
         })
 
-        // let msg0 = {name: "Ren", message: "Hello! How may I help you today?"}
-        // this.messages.push(msg0)
-        // this.updateChatText(chatBox)
+        let msg0 = {name: "Ren", message: "Hello! How may I help you today?"}
+        this.messages.push(msg0)
+        this.updateChatText(chatBox)
     }
 
     toggleState(chatbox) {
