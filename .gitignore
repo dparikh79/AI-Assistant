@@ -1,4 +1,57 @@
+# Secrets / config
 secrets.json
-Product\ Features.docx
-uploads/
+.env
+.env.*
+!.env.example
+
+# Python
 __pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual envs
+.venv/
+venv/
+env/
+ENV/
+
+# Audio cache / TTS artifacts
+*.mp3
+*.wav
+*.aiff
+*.flac
+audio_cache/
+
+# Uploaded PDFs (runtime)
+uploads/
+*.pdf
+Product\ Features.docx
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
